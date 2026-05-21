@@ -1,0 +1,150 @@
+# ============================================================
+# Lichen Planus Diagnostic Rule Base
+# Disease target: lichen_planus (class 3)
+# Rules: LP_001 through LP_005
+# Evidence tiers: A = pathognomonic, B = supportive
+# ============================================================
+
+rules:
+
+  - rule_id: LP_001
+    disease_target: lichen_planus
+    evidence_tier: A
+    activation_logic: binary
+    confidence_weight: 0.90
+    clinical_rationale: >
+      Polygonal papules (the "6 Ps": pruritic, planar, polygonal, purple, papules,
+      plaques) are pathognomonic for lichen planus. The flat-topped, angulated
+      morphology is diagnostically specific and represents the most reliable clinical
+      marker distinguishing lichen planus from all other erythemato-squamous diseases.
+      Presence alone constitutes tier-A evidence.
+    supporting_features:
+      - feature: polygonal_papules
+        condition: eq
+        threshold: 1
+        partial_weight: 1.0
+    contradiction_features:
+      - feature: koebner_phenomenon
+        condition: eq
+        threshold: 1
+        penalty: 0.35
+        competing_disease: psoriasis
+      - feature: knee_and_elbow_involvement
+        condition: eq
+        threshold: 1
+        penalty: 0.30
+        competing_disease: psoriasis
+    min_activation_threshold: 0.50
+    literature_source: "Gorouhi F, Davari P, Fazel N. Cutaneous and mucosal lichen planus: a comprehensive review of clinical subtypes, risk factors, diagnosis, and prognosis. ScientificWorldJournal 2014;2014:742826."
+
+  - rule_id: LP_002
+    disease_target: lichen_planus
+    evidence_tier: A
+    activation_logic: binary
+    confidence_weight: 0.88
+    clinical_rationale: >
+      Oral mucosal involvement (Wickham's striae, erosive oral lichen planus, or
+      reticular white patches on buccal mucosa) is present in approximately 50–70%
+      of cutaneous lichen planus cases. In the context of erythemato-squamous
+      skin disease, oral mucosal signs are strongly discriminating against psoriasis
+      and seborrheic dermatitis, which do not characteristically affect mucosae.
+    supporting_features:
+      - feature: oral_mucosal_involvement
+        condition: eq
+        threshold: 1
+        partial_weight: 1.0
+    contradiction_features:
+      - feature: koebner_phenomenon
+        condition: eq
+        threshold: 1
+        penalty: 0.30
+        competing_disease: psoriasis
+      - feature: scalp_involvement
+        condition: eq
+        threshold: 1
+        penalty: 0.20
+        competing_disease: seborrheic_dermatitis
+    min_activation_threshold: 0.50
+    literature_source: "Eisen D. The clinical features, malignant potential, and systemic associations of oral lichen planus: a study of 723 patients. J Am Acad Dermatol 2002;46(2):207–214."
+
+  - rule_id: LP_003
+    disease_target: lichen_planus
+    evidence_tier: B
+    activation_logic: threshold
+    confidence_weight: 0.75
+    clinical_rationale: >
+      Significant pruritus (grade ≥ 2) is a cardinal symptom of lichen planus.
+      The intense pruritus of lichen planus is often refractory to standard
+      antihistamines and may precede visible lesions. Combined with morphological
+      features (polygonal_papules), high-grade pruritus strengthens the diagnosis.
+    supporting_features:
+      - feature: itching
+        condition: gte
+        threshold: 2
+        partial_weight: 1.0
+    contradiction_features:
+      - feature: family_history
+        condition: eq
+        threshold: 1
+        penalty: 0.25
+        competing_disease: psoriasis
+    min_activation_threshold: 0.50
+    literature_source: "Boyd AS & Neldner KH. Lichen planus. J Am Acad Dermatol 1991;25(4):593–619."
+
+  - rule_id: LP_004
+    disease_target: lichen_planus
+    evidence_tier: B
+    activation_logic: threshold
+    confidence_weight: 0.70
+    clinical_rationale: >
+      Well-defined borders (grade ≥ 2) with angular, flat-topped morphology are
+      characteristic of the lichenoid plaque. The organised epidermal–dermal
+      interface reaction in lichen planus produces discrete, well-demarcated
+      lesions distinct from the diffuse involvement of seborrheic dermatitis.
+    supporting_features:
+      - feature: definite_borders
+        condition: gte
+        threshold: 2
+        partial_weight: 1.0
+    contradiction_features:
+      - feature: koebner_phenomenon
+        condition: eq
+        threshold: 1
+        penalty: 0.30
+        competing_disease: psoriasis
+    min_activation_threshold: 0.50
+    literature_source: "Gorouhi F, Davari P, Fazel N. Cutaneous and mucosal lichen planus: a comprehensive review. ScientificWorldJournal 2014;2014:742826."
+
+  - rule_id: LP_005
+    disease_target: lichen_planus
+    evidence_tier: B
+    activation_logic: composite
+    confidence_weight: 0.65
+    clinical_rationale: >
+      Visible erythema (grade ≥ 1) combined with significant scaling (grade ≥ 2)
+      in a lichen planus case reflects the mixed lichenoid-psoriasiform pattern
+      occasionally seen in hypertrophic lichen planus. This composite rule captures
+      cases where the classic polygonal morphology is obscured by secondary changes,
+      providing supplementary evidence when tier-A rules are subthreshold.
+    supporting_features:
+      - feature: erythema
+        condition: gte
+        threshold: 1
+        partial_weight: 0.50
+      - feature: scaling
+        condition: gte
+        threshold: 2
+        partial_weight: 0.50
+    contradiction_features:
+      - feature: koebner_phenomenon
+        condition: eq
+        threshold: 1
+        penalty: 0.40
+        competing_disease: psoriasis
+      - feature: follicular_papules
+        condition: eq
+        threshold: 1
+        penalty: 0.35
+        competing_disease: pityriasis_rubra_pilaris
+    min_activation_threshold: 0.50
+    literature_source: "Kanwar AJ & De D. Lichen planus in childhood: a report of 100 cases. Clin Exp Dermatol 2010;35(3):257–262."

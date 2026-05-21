@@ -1,0 +1,214 @@
+# ============================================================
+# Cross-Disease Discriminator Rule Base
+# Evidence tier: D — discriminating between specific disease pairs
+# These rules activate only when two diseases occupy the top-2
+# hypothesis positions and additional differentiation is needed.
+# ============================================================
+
+rules:
+
+  - rule_id: PSO_SD_001
+    disease_target: psoriasis
+    competing_disease: seborrheic_dermatitis
+    evidence_tier: D
+    activation_logic: binary
+    confidence_weight: 0.80
+    clinical_rationale: >
+      When psoriasis and seborrheic dermatitis are the leading hypotheses, the
+      Koebner phenomenon is the decisive discriminator: it occurs in psoriasis and
+      is absent in seborrheic dermatitis. A positive Koebner response provides
+      strong differential support for psoriasis. Additionally, extensor joint
+      surface involvement (knees, elbows) strongly favours psoriasis, as seborrheic
+      dermatitis preferentially involves sebaceous gland-rich sites (scalp, nasolabial
+      folds, presternal) and does not extend to dry extensor surfaces.
+    discriminating_features:
+      - feature: koebner_phenomenon
+        condition: eq
+        threshold: 1
+        favours: psoriasis
+        partial_weight: 0.55
+      - feature: knee_and_elbow_involvement
+        condition: eq
+        threshold: 1
+        favours: psoriasis
+        partial_weight: 0.45
+    trigger_condition:
+      top_disease: psoriasis
+      second_disease: seborrheic_dermatitis
+      max_certainty_gap: 0.30
+    literature_source: "Naldi L & Rebora A. Seborrheic dermatitis. N Engl J Med 2009;360(4):387–396."
+
+  - rule_id: PSO_LP_001
+    disease_target: psoriasis
+    competing_disease: lichen_planus
+    evidence_tier: D
+    activation_logic: binary
+    confidence_weight: 0.85
+    clinical_rationale: >
+      Psoriasis and lichen planus can both produce well-defined, pruritic, scaling
+      plaques. The decisive discriminators are: (1) polygonal papule morphology,
+      which is pathognomonic for lichen planus; (2) oral mucosal involvement,
+      which strongly favours lichen planus and is absent in psoriasis; and
+      (3) the Koebner phenomenon, which favours psoriasis when present.
+      When these diseases are in competition, mucosal and morphological features
+      outweigh scaling and erythema intensity.
+    discriminating_features:
+      - feature: oral_mucosal_involvement
+        condition: eq
+        threshold: 1
+        favours: lichen_planus
+        partial_weight: 0.50
+      - feature: polygonal_papules
+        condition: eq
+        threshold: 1
+        favours: lichen_planus
+        partial_weight: 0.30
+      - feature: koebner_phenomenon
+        condition: eq
+        threshold: 1
+        favours: psoriasis
+        partial_weight: 0.20
+    trigger_condition:
+      top_disease: psoriasis
+      second_disease: lichen_planus
+      max_certainty_gap: 0.30
+    literature_source: "Boyd AS & Neldner KH. Lichen planus. J Am Acad Dermatol 1991;25(4):593–619."
+
+  - rule_id: LP_PR_001
+    disease_target: lichen_planus
+    competing_disease: pityriasis_rosea
+    evidence_tier: D
+    activation_logic: binary
+    confidence_weight: 0.82
+    clinical_rationale: >
+      Lichen planus and pityriasis rosea can both present with intensely pruritic
+      papulosquamous eruptions on the trunk. The decisive discriminators are:
+      (1) polygonal papule morphology is pathognomonic for lichen planus;
+      (2) oral mucosal involvement occurs in lichen planus but not pityriasis rosea;
+      (3) the Koebner phenomenon can occur in both but is stronger evidence for
+      lichen planus in this pairing. Pityriasis rosea favoured by Christmas-tree
+      truncal distribution without mucosal involvement.
+    discriminating_features:
+      - feature: polygonal_papules
+        condition: eq
+        threshold: 1
+        favours: lichen_planus
+        partial_weight: 0.50
+      - feature: oral_mucosal_involvement
+        condition: eq
+        threshold: 1
+        favours: lichen_planus
+        partial_weight: 0.35
+      - feature: knee_and_elbow_involvement
+        condition: eq
+        threshold: 0
+        favours: pityriasis_rosea
+        partial_weight: 0.15
+    trigger_condition:
+      top_disease: lichen_planus
+      second_disease: pityriasis_rosea
+      max_certainty_gap: 0.30
+    literature_source: "Drago F, Broccolo F, Rebora A. Pityriasis rosea. J Am Acad Dermatol 2009;61(2):303–318."
+
+  - rule_id: LP_PSO_001
+    disease_target: lichen_planus
+    competing_disease: psoriasis
+    evidence_tier: D
+    activation_logic: binary
+    confidence_weight: 0.85
+    clinical_rationale: >
+      When lichen planus is the leading hypothesis with psoriasis in second position,
+      the discriminating evidence operates symmetrically to PSO_LP_001 but scored
+      in the opposite direction. The presence of oral mucosal signs or polygonal
+      papule morphology consolidates lichen planus; the Koebner phenomenon plus
+      extensor joint involvement shifts probability toward psoriasis. Family history
+      of psoriasis additionally favours psoriasis.
+    discriminating_features:
+      - feature: polygonal_papules
+        condition: eq
+        threshold: 1
+        favours: lichen_planus
+        partial_weight: 0.40
+      - feature: oral_mucosal_involvement
+        condition: eq
+        threshold: 1
+        favours: lichen_planus
+        partial_weight: 0.40
+      - feature: family_history
+        condition: eq
+        threshold: 1
+        favours: psoriasis
+        partial_weight: 0.20
+    trigger_condition:
+      top_disease: lichen_planus
+      second_disease: psoriasis
+      max_certainty_gap: 0.30
+    literature_source: "Griffiths CEM & Barker JNWN. Pathogenesis and clinical features of psoriasis. Lancet 2007;370:263–271."
+
+  - rule_id: PRP_PSO_001
+    disease_target: pityriasis_rubra_pilaris
+    competing_disease: psoriasis
+    evidence_tier: D
+    activation_logic: binary
+    confidence_weight: 0.88
+    clinical_rationale: >
+      PRP and psoriasis can both produce widespread erythematous scaling plaques.
+      The decisive discriminator is the presence of follicular papules, which are
+      pathognomonic for PRP and absent in psoriasis. The absence of the Koebner
+      phenomenon favours PRP (the Koebner response has not been documented in PRP),
+      and the absence of oral mucosal involvement additionally disfavours lichen planus
+      as a competing explanation. Follicular involvement is the single most powerful
+      discriminator in this pairing.
+    discriminating_features:
+      - feature: follicular_papules
+        condition: eq
+        threshold: 1
+        favours: pityriasis_rubra_pilaris
+        partial_weight: 0.65
+      - feature: koebner_phenomenon
+        condition: eq
+        threshold: 0
+        favours: pityriasis_rubra_pilaris
+        partial_weight: 0.20
+      - feature: scalp_involvement
+        condition: eq
+        threshold: 1
+        favours: pityriasis_rubra_pilaris
+        partial_weight: 0.15
+    trigger_condition:
+      top_disease: pityriasis_rubra_pilaris
+      second_disease: psoriasis
+      max_certainty_gap: 0.30
+    literature_source: "Griffiths WAD. Pityriasis rubra pilaris. Clin Exp Dermatol 1980;5(1):105–112."
+
+  - rule_id: SD_CD_001
+    disease_target: seborrheic_dermatitis
+    competing_disease: chronic_dermatitis
+    evidence_tier: D
+    activation_logic: binary
+    confidence_weight: 0.72
+    clinical_rationale: >
+      Seborrheic dermatitis and chronic dermatitis share diffuse poorly-bordered
+      erythema with pruritus. The decisive differentiators are: (1) scalp involvement
+      with greasy scale is characteristic of seborrheic dermatitis (driven by
+      Malassezia) rather than eczematous lichenification; (2) severe pruritus
+      (grade ≥ 3) is more characteristic of chronic dermatitis (itch-scratch cycle);
+      (3) family history of atopy may be present in chronic/atopic dermatitis.
+      Scalp involvement with moderate scaling tips the balance toward seborrheic
+      dermatitis in this pairing.
+    discriminating_features:
+      - feature: scalp_involvement
+        condition: eq
+        threshold: 1
+        favours: seborrheic_dermatitis
+        partial_weight: 0.55
+      - feature: itching
+        condition: gte
+        threshold: 3
+        favours: chronic_dermatitis
+        partial_weight: 0.45
+    trigger_condition:
+      top_disease: seborrheic_dermatitis
+      second_disease: chronic_dermatitis
+      max_certainty_gap: 0.30
+    literature_source: "Naldi L & Rebora A. Seborrheic dermatitis. N Engl J Med 2009;360(4):387–396."

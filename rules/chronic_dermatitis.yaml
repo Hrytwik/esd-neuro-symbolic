@@ -1,0 +1,138 @@
+# ============================================================
+# Chronic Dermatitis Diagnostic Rule Base
+# Disease target: chronic_dermatitis (class 5)
+# Rules: CD_001 through CD_004
+# Evidence tiers: A = pathognomonic, B = supportive
+# ============================================================
+
+rules:
+
+  - rule_id: CD_001
+    disease_target: chronic_dermatitis
+    evidence_tier: A
+    activation_logic: composite
+    confidence_weight: 0.80
+    clinical_rationale: >
+      Chronic dermatitis (chronic eczema) characteristically presents with intense,
+      persistent pruritus (grade ≥ 2) combined with poorly defined borders
+      (grade ≤ 1) — reflecting the diffuse, non-plaque-forming inflammatory pattern
+      driven by repeated itch-scratch cycles. This combination is the most
+      diagnostically reliable clinical signature for chronic dermatitis and
+      distinguishes it from the well-demarcated plaques of psoriasis and lichen planus.
+    supporting_features:
+      - feature: itching
+        condition: gte
+        threshold: 2
+        partial_weight: 0.60
+      - feature: definite_borders
+        condition: lte
+        threshold: 1
+        partial_weight: 0.40
+    contradiction_features:
+      - feature: koebner_phenomenon
+        condition: eq
+        threshold: 1
+        penalty: 0.45
+        competing_disease: psoriasis
+      - feature: polygonal_papules
+        condition: eq
+        threshold: 1
+        penalty: 0.55
+        competing_disease: lichen_planus
+    min_activation_threshold: 0.50
+    literature_source: "Bieber T. Atopic Dermatitis. Ann Dermatol 2010;22(2):125–137."
+
+  - rule_id: CD_002
+    disease_target: chronic_dermatitis
+    evidence_tier: B
+    activation_logic: threshold
+    confidence_weight: 0.72
+    clinical_rationale: >
+      Significant erythema (grade ≥ 2) in chronic dermatitis reflects the persistent
+      inflammatory state driven by cytokine dysregulation (Th2 predominance in acute;
+      mixed Th1/Th2 in chronic phase). Unlike psoriasis, the erythema in chronic
+      dermatitis is associated with lichenification and excoriation rather than
+      structured scaling, and lacks the sharp plaque borders of psoriatic lesions.
+    supporting_features:
+      - feature: erythema
+        condition: gte
+        threshold: 2
+        partial_weight: 1.0
+    contradiction_features:
+      - feature: koebner_phenomenon
+        condition: eq
+        threshold: 1
+        penalty: 0.40
+        competing_disease: psoriasis
+      - feature: definite_borders
+        condition: gte
+        threshold: 3
+        penalty: 0.35
+        competing_disease: psoriasis
+    min_activation_threshold: 0.50
+    literature_source: "Weidinger S & Novak N. Atopic dermatitis. Lancet 2016;387(10023):1109–1122."
+
+  - rule_id: CD_003
+    disease_target: chronic_dermatitis
+    evidence_tier: B
+    activation_logic: threshold
+    confidence_weight: 0.65
+    clinical_rationale: >
+      Scaling in chronic dermatitis (grade ≥ 1) results from the epidermal barrier
+      disruption and abnormal keratinocyte turnover secondary to chronic inflammation.
+      The scale in chronic dermatitis is typically fine, dry, and distributed over
+      lichenified skin — differing from the coarse, adherent silvery scale of
+      psoriasis. Low-to-moderate scaling in the clinical context is a supportive
+      but non-specific feature.
+    supporting_features:
+      - feature: scaling
+        condition: gte
+        threshold: 1
+        partial_weight: 1.0
+    contradiction_features:
+      - feature: knee_and_elbow_involvement
+        condition: eq
+        threshold: 1
+        penalty: 0.30
+        competing_disease: psoriasis
+      - feature: oral_mucosal_involvement
+        condition: eq
+        threshold: 1
+        penalty: 0.40
+        competing_disease: lichen_planus
+    min_activation_threshold: 0.50
+    literature_source: "Elias PM & Steinhoff M. 'Outside-to-inside' (and now back to 'outside') pathogenic mechanisms in atopic dermatitis. J Invest Dermatol 2008;128(5):1067–1070."
+
+  - rule_id: CD_004
+    disease_target: chronic_dermatitis
+    evidence_tier: B
+    activation_logic: binary
+    confidence_weight: 0.60
+    clinical_rationale: >
+      Chronic dermatitis does not characteristically produce the Koebner phenomenon,
+      polygonal flat-topped papules, follicular plugging, or oral mucosal involvement.
+      The absence of these distinctive features, combined with diffuse poorly-bordered
+      erythema and dominant pruritus, collectively supports a diagnosis of chronic
+      dermatitis in the context of erythemato-squamous disease. This rule captures
+      the absence pattern when negative discriminating evidence accumulates.
+    supporting_features:
+      - feature: koebner_phenomenon
+        condition: eq
+        threshold: 0
+        partial_weight: 0.34
+      - feature: polygonal_papules
+        condition: eq
+        threshold: 0
+        partial_weight: 0.33
+      - feature: follicular_papules
+        condition: eq
+        threshold: 0
+        partial_weight: 0.33
+    contradiction_features:
+      - feature: family_history
+        condition: eq
+        threshold: 1
+        penalty: 0.25
+        competing_disease: psoriasis
+    min_activation_threshold: 0.50
+    literature_source: "Wolff K, Johnson RA, Saavedra AP. Fitzpatrick's Color Atlas and Synopsis of Clinical Dermatology. 7th ed. McGraw-Hill; 2013."

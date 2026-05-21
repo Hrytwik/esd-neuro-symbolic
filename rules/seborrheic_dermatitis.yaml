@@ -1,0 +1,122 @@
+# ============================================================
+# Seborrheic Dermatitis Diagnostic Rule Base
+# Disease target: seborrheic_dermatitis (class 2)
+# Rules: SD_001 through SD_004
+# Evidence tiers: A = pathognomonic, B = supportive
+# ============================================================
+
+rules:
+
+  - rule_id: SD_001
+    disease_target: seborrheic_dermatitis
+    evidence_tier: A
+    activation_logic: composite
+    confidence_weight: 0.82
+    clinical_rationale: >
+      Seborrheic dermatitis characteristically presents with greasy, yellowish scaling
+      (parakeratosis pattern) overlying erythematous plaques in sebaceous gland-rich
+      regions. Scalp involvement combined with moderate-to-significant scaling is the
+      most common presentation and distinguishes seborrheic dermatitis from psoriasis
+      (which produces drier, silvery scale) and from other differentials.
+    supporting_features:
+      - feature: scalp_involvement
+        condition: eq
+        threshold: 1
+        partial_weight: 0.55
+      - feature: scaling
+        condition: gte
+        threshold: 2
+        partial_weight: 0.45
+    contradiction_features:
+      - feature: koebner_phenomenon
+        condition: eq
+        threshold: 1
+        penalty: 0.40
+        competing_disease: psoriasis
+      - feature: knee_and_elbow_involvement
+        condition: eq
+        threshold: 1
+        penalty: 0.35
+        competing_disease: psoriasis
+    min_activation_threshold: 0.50
+    literature_source: "Borda LJ & Wikramanayake TC. Seborrheic Dermatitis and Dandruff: A Comprehensive Review. J Clin Investig Dermatol 2015;3(2)."
+
+  - rule_id: SD_002
+    disease_target: seborrheic_dermatitis
+    evidence_tier: B
+    activation_logic: threshold
+    confidence_weight: 0.72
+    clinical_rationale: >
+      Moderate erythema (grade ≥ 2) in the absence of the sharp plaque borders and
+      thick scaling typical of psoriasis is consistent with seborrheic dermatitis.
+      Erythema in seborrheic dermatitis tends to be less vivid and more diffuse,
+      reflecting the underlying inflammatory pattern driven by Malassezia colonisation.
+    supporting_features:
+      - feature: erythema
+        condition: gte
+        threshold: 2
+        partial_weight: 1.0
+    contradiction_features:
+      - feature: koebner_phenomenon
+        condition: eq
+        threshold: 1
+        penalty: 0.45
+        competing_disease: psoriasis
+      - feature: definite_borders
+        condition: gte
+        threshold: 3
+        penalty: 0.30
+        competing_disease: psoriasis
+    min_activation_threshold: 0.50
+    literature_source: "Schwartz RA, Janusz CA, Janniger CK. Seborrheic dermatitis: an overview. Am Fam Physician 2006;74(1):125–130."
+
+  - rule_id: SD_003
+    disease_target: seborrheic_dermatitis
+    evidence_tier: B
+    activation_logic: threshold
+    confidence_weight: 0.68
+    clinical_rationale: >
+      Significant itching (grade ≥ 2) is a common but non-specific complaint in
+      seborrheic dermatitis. Combined with scalp distribution and characteristic
+      scaling pattern, pruritus supports the diagnosis. The itch of seborrheic
+      dermatitis is typically milder than atopic dermatitis but more persistent
+      than that of pityriasis rosea.
+    supporting_features:
+      - feature: itching
+        condition: gte
+        threshold: 2
+        partial_weight: 1.0
+    contradiction_features:
+      - feature: polygonal_papules
+        condition: eq
+        threshold: 1
+        penalty: 0.50
+        competing_disease: lichen_planus
+    min_activation_threshold: 0.50
+    literature_source: "Naldi L & Rebora A. Clinical practice: seborrheic dermatitis. N Engl J Med 2009;360(4):387–396."
+
+  - rule_id: SD_004
+    disease_target: seborrheic_dermatitis
+    evidence_tier: B
+    activation_logic: binary
+    confidence_weight: 0.60
+    clinical_rationale: >
+      Unlike psoriasis, seborrheic dermatitis typically lacks the well-demarcated
+      plaque borders produced by the organised proliferative front of keratinocytes.
+      When definite_borders is absent (grade = 0 or 1) in a scaling erythematous
+      condition with scalp predilection, seborrheic dermatitis is favoured over
+      psoriasis. Absence of sharp borders is used here as a supporting — not
+      discriminating — signal in the context of the full rule set.
+    supporting_features:
+      - feature: definite_borders
+        condition: lte
+        threshold: 1
+        partial_weight: 1.0
+    contradiction_features:
+      - feature: koebner_phenomenon
+        condition: eq
+        threshold: 1
+        penalty: 0.50
+        competing_disease: psoriasis
+    min_activation_threshold: 0.50
+    literature_source: "Elewski BE, Hedrick J. Seborrheic dermatitis. In: Wolff K et al, eds. Fitzpatrick's Dermatology in General Medicine. 8th ed. McGraw-Hill; 2012."

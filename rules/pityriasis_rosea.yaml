@@ -1,0 +1,138 @@
+# ============================================================
+# Pityriasis Rosea Diagnostic Rule Base
+# Disease target: pityriasis_rosea (class 4)
+# Rules: PR_001 through PR_004
+# Evidence tiers: A = pathognomonic, B = supportive
+# ============================================================
+
+rules:
+
+  - rule_id: PR_001
+    disease_target: pityriasis_rosea
+    evidence_tier: A
+    activation_logic: composite
+    confidence_weight: 0.83
+    clinical_rationale: >
+      Pityriasis rosea characteristically presents with well-defined borders and a
+      distinctive fine, crinkled "tissue-paper" scaling distributed along skin tension
+      lines (Langer lines) in a Christmas tree pattern. The combination of definite
+      borders at maximum grade (3) with prominent scaling (grade ≥ 2) approximates
+      the herald patch and subsequent exanthem morphology that is pathognomonic
+      for this self-limiting dermatosis.
+    supporting_features:
+      - feature: definite_borders
+        condition: eq
+        threshold: 3
+        partial_weight: 0.55
+      - feature: scaling
+        condition: gte
+        threshold: 2
+        partial_weight: 0.45
+    contradiction_features:
+      - feature: koebner_phenomenon
+        condition: eq
+        threshold: 1
+        penalty: 0.45
+        competing_disease: psoriasis
+      - feature: oral_mucosal_involvement
+        condition: eq
+        threshold: 1
+        penalty: 0.50
+        competing_disease: lichen_planus
+      - feature: follicular_papules
+        condition: eq
+        threshold: 1
+        penalty: 0.40
+        competing_disease: pityriasis_rubra_pilaris
+    min_activation_threshold: 0.50
+    literature_source: "Drago F, Broccolo F, Rebora A. Pityriasis rosea: an update with a critical appraisal of its possible herpesviral etiology. J Am Acad Dermatol 2009;61(2):303–318."
+
+  - rule_id: PR_002
+    disease_target: pityriasis_rosea
+    evidence_tier: B
+    activation_logic: threshold
+    confidence_weight: 0.72
+    clinical_rationale: >
+      Mild-to-moderate erythema (grade 1–2) distributed on the trunk is typical
+      of pityriasis rosea. The erythema is less vivid than psoriasis and lacks the
+      follicular accentuation of pityriasis rubra pilaris. Moderate erythema at
+      grade ≥ 1 in the presence of the characteristic scaling pattern contributes
+      supporting evidence for this diagnosis.
+    supporting_features:
+      - feature: erythema
+        condition: gte
+        threshold: 1
+        partial_weight: 1.0
+    contradiction_features:
+      - feature: knee_and_elbow_involvement
+        condition: eq
+        threshold: 1
+        penalty: 0.40
+        competing_disease: psoriasis
+      - feature: scalp_involvement
+        condition: eq
+        threshold: 1
+        penalty: 0.30
+        competing_disease: seborrheic_dermatitis
+    min_activation_threshold: 0.50
+    literature_source: "Stulberg DL & Wolfrey J. Pityriasis rosea. Am Fam Physician 2004;69(1):87–91."
+
+  - rule_id: PR_003
+    disease_target: pityriasis_rosea
+    evidence_tier: B
+    activation_logic: threshold
+    confidence_weight: 0.65
+    clinical_rationale: >
+      Pruritus in pityriasis rosea is typically mild and may be absent in a subset
+      of patients. A low-to-moderate itch score (grade 1) in the context of
+      otherwise characteristic morphology is consistent with pityriasis rosea and
+      helps differentiate from the more intensely pruritic presentations of lichen
+      planus and chronic dermatitis.
+    supporting_features:
+      - feature: itching
+        condition: gte
+        threshold: 1
+        partial_weight: 1.0
+    contradiction_features:
+      - feature: polygonal_papules
+        condition: eq
+        threshold: 1
+        penalty: 0.55
+        competing_disease: lichen_planus
+    min_activation_threshold: 0.50
+    literature_source: "Chuh AA, Dofitas BL, Comisel GG, et al. Interventions for pityriasis rosea. Cochrane Database Syst Rev 2007;(2):CD005068."
+
+  - rule_id: PR_004
+    disease_target: pityriasis_rosea
+    evidence_tier: B
+    activation_logic: binary
+    confidence_weight: 0.60
+    clinical_rationale: >
+      Pityriasis rosea is a self-limiting condition typically resolving within 6–12
+      weeks and does not characteristically involve the extensor joint surfaces,
+      scalp, mucosae, or follicular apparatus. Absence of site-specific features
+      (knee_and_elbow_involvement = 0, scalp_involvement = 0) combined with a
+      characteristic truncal scaling pattern supports the diagnosis of pityriasis
+      rosea and militates against psoriasis.
+    supporting_features:
+      - feature: knee_and_elbow_involvement
+        condition: eq
+        threshold: 0
+        partial_weight: 0.50
+      - feature: scalp_involvement
+        condition: eq
+        threshold: 0
+        partial_weight: 0.50
+    contradiction_features:
+      - feature: koebner_phenomenon
+        condition: eq
+        threshold: 1
+        penalty: 0.50
+        competing_disease: psoriasis
+      - feature: family_history
+        condition: eq
+        threshold: 1
+        penalty: 0.30
+        competing_disease: psoriasis
+    min_activation_threshold: 0.50
+    literature_source: "Vidimos AT & Camisa C. Tongue and cheek: oral lesions in pityriasis rosea. Cutis 1992;50(4):276–280."

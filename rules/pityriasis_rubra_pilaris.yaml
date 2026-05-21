@@ -1,0 +1,134 @@
+# ============================================================
+# Pityriasis Rubra Pilaris Diagnostic Rule Base
+# Disease target: pityriasis_rubra_pilaris (class 6)
+# Rules: PRP_001 through PRP_004
+# Evidence tiers: A = pathognomonic, B = supportive
+# ============================================================
+
+rules:
+
+  - rule_id: PRP_001
+    disease_target: pityriasis_rubra_pilaris
+    evidence_tier: A
+    activation_logic: binary
+    confidence_weight: 0.92
+    clinical_rationale: >
+      Follicular papules (perifollicular keratotic plugs producing a nutmeg-grater
+      texture) are the pathognomonic clinical sign of pityriasis rubra pilaris (PRP).
+      Their presence, particularly on the dorsal aspects of the proximal phalanges,
+      represents the most reliable clinical marker of PRP and distinguishes it from
+      all other erythemato-squamous conditions. No other disease in the differential
+      set routinely produces this folliculocentric pattern.
+    supporting_features:
+      - feature: follicular_papules
+        condition: eq
+        threshold: 1
+        partial_weight: 1.0
+    contradiction_features:
+      - feature: oral_mucosal_involvement
+        condition: eq
+        threshold: 1
+        penalty: 0.45
+        competing_disease: lichen_planus
+      - feature: koebner_phenomenon
+        condition: eq
+        threshold: 1
+        penalty: 0.40
+        competing_disease: psoriasis
+      - feature: polygonal_papules
+        condition: eq
+        threshold: 1
+        penalty: 0.50
+        competing_disease: lichen_planus
+    min_activation_threshold: 0.50
+    literature_source: "Griffiths WAD. Pityriasis rubra pilaris. Clin Exp Dermatol 1980;5(1):105–112."
+
+  - rule_id: PRP_002
+    disease_target: pityriasis_rubra_pilaris
+    evidence_tier: B
+    activation_logic: threshold
+    confidence_weight: 0.78
+    clinical_rationale: >
+      PRP characteristically produces prominent, brightly erythematous plaques
+      (grade ≥ 2) with a distinctive salmon-orange hue interspersed with islands
+      of normal skin ("nappes claires"). The intensity of erythema exceeds that
+      typically seen in seborrheic dermatitis and chronic dermatitis. The combined
+      pattern of high erythema with follicular involvement is highly characteristic.
+    supporting_features:
+      - feature: erythema
+        condition: gte
+        threshold: 2
+        partial_weight: 1.0
+    contradiction_features:
+      - feature: koebner_phenomenon
+        condition: eq
+        threshold: 1
+        penalty: 0.40
+        competing_disease: psoriasis
+      - feature: oral_mucosal_involvement
+        condition: eq
+        threshold: 1
+        penalty: 0.40
+        competing_disease: lichen_planus
+    min_activation_threshold: 0.50
+    literature_source: "Sehgal VN, Srivastava G, Dogra S. Pityriasis rubra pilaris. Indian J Dermatol Venereol Leprol 2008;74(1):6–15."
+
+  - rule_id: PRP_003
+    disease_target: pityriasis_rubra_pilaris
+    evidence_tier: B
+    activation_logic: threshold
+    confidence_weight: 0.70
+    clinical_rationale: >
+      Moderate-to-severe scaling (grade ≥ 2) in PRP reflects the generalised
+      keratodermic process underlying this condition. The scale is often lamellar
+      and may progress to erythroderma in severe cases. Prominent scaling in
+      combination with follicular papules constitutes a near-sufficient basis
+      for clinical diagnosis of PRP without histopathological confirmation.
+    supporting_features:
+      - feature: scaling
+        condition: gte
+        threshold: 2
+        partial_weight: 1.0
+    contradiction_features:
+      - feature: koebner_phenomenon
+        condition: eq
+        threshold: 1
+        penalty: 0.35
+        competing_disease: psoriasis
+    min_activation_threshold: 0.50
+    literature_source: "Picard D, Janin A, Chevrant-Breton J. Pityriasis rubra pilaris: revisiting the classification. J Eur Acad Dermatol Venereol 2013;27(4):e346–e348."
+
+  - rule_id: PRP_004
+    disease_target: pityriasis_rubra_pilaris
+    evidence_tier: B
+    activation_logic: composite
+    confidence_weight: 0.62
+    clinical_rationale: >
+      Scalp involvement with significant scaling is common in PRP and may be the
+      presenting feature in some subtypes. Combined with erythema at a clinically
+      significant level (grade ≥ 2), scalp-dominant scaling with erythema supports
+      PRP particularly when follicular papules are also present. This composite rule
+      provides supplementary evidence in cases where the folliculocentric pattern
+      is partially expressed.
+    supporting_features:
+      - feature: scalp_involvement
+        condition: eq
+        threshold: 1
+        partial_weight: 0.50
+      - feature: erythema
+        condition: gte
+        threshold: 2
+        partial_weight: 0.50
+    contradiction_features:
+      - feature: polygonal_papules
+        condition: eq
+        threshold: 1
+        penalty: 0.50
+        competing_disease: lichen_planus
+      - feature: oral_mucosal_involvement
+        condition: eq
+        threshold: 1
+        penalty: 0.40
+        competing_disease: lichen_planus
+    min_activation_threshold: 0.50
+    literature_source: "Sehgal VN, Srivastava G, Dogra S. Pityriasis rubra pilaris. Indian J Dermatol Venereol Leprol 2008;74(1):6–15."

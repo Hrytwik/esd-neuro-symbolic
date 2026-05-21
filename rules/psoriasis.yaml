@@ -1,0 +1,157 @@
+# ============================================================
+# Psoriasis Diagnostic Rule Base
+# Disease target: psoriasis (class 1)
+# Rules: PSO_001 through PSO_006
+# Evidence tiers: A = pathognomonic, B = supportive
+# ============================================================
+
+rules:
+
+  - rule_id: PSO_001
+    disease_target: psoriasis
+    evidence_tier: A
+    activation_logic: binary
+    confidence_weight: 0.85
+    clinical_rationale: >
+      Koebner phenomenon (isomorphic response) is a pathognomonic feature of psoriasis
+      in which new psoriatic lesions appear at sites of cutaneous trauma. Its presence
+      in the context of erythemato-squamous disease is a strong discriminator for
+      psoriasis over all other differentials.
+    supporting_features:
+      - feature: koebner_phenomenon
+        condition: eq
+        threshold: 1
+        partial_weight: 1.0
+    contradiction_features:
+      - feature: oral_mucosal_involvement
+        condition: eq
+        threshold: 1
+        penalty: 0.30
+        competing_disease: lichen_planus
+      - feature: follicular_papules
+        condition: eq
+        threshold: 1
+        penalty: 0.45
+        competing_disease: pityriasis_rubra_pilaris
+    min_activation_threshold: 0.50
+    literature_source: "Griffiths CEM & Barker JNWN. Pathogenesis and clinical features of psoriasis. Lancet 2007;370:263–271."
+
+  - rule_id: PSO_002
+    disease_target: psoriasis
+    evidence_tier: B
+    activation_logic: binary
+    confidence_weight: 0.80
+    clinical_rationale: >
+      Bilateral symmetric involvement of extensor surfaces — specifically the knees and
+      elbows — is a cardinal topographic feature of chronic plaque psoriasis. Its
+      presence meaningfully increases posterior probability for psoriasis over
+      seborrheic dermatitis and lichen planus, which preferentially affect other sites.
+    supporting_features:
+      - feature: knee_and_elbow_involvement
+        condition: eq
+        threshold: 1
+        partial_weight: 1.0
+    contradiction_features:
+      - feature: oral_mucosal_involvement
+        condition: eq
+        threshold: 1
+        penalty: 0.25
+        competing_disease: lichen_planus
+    min_activation_threshold: 0.50
+    literature_source: "Habif TP. Clinical Dermatology: A Color Guide to Diagnosis and Therapy. 6th ed. Elsevier; 2016. Chapter 8."
+
+  - rule_id: PSO_003
+    disease_target: psoriasis
+    evidence_tier: B
+    activation_logic: binary
+    confidence_weight: 0.75
+    clinical_rationale: >
+      Scalp involvement is present in up to 80% of psoriasis patients and frequently
+      presents as thick, adherent silvery scale overlying erythematous plaques at the
+      hairline. Scalp involvement in isolation is less specific, but combined with
+      extensor involvement substantially raises pre-test probability for psoriasis.
+    supporting_features:
+      - feature: scalp_involvement
+        condition: eq
+        threshold: 1
+        partial_weight: 1.0
+    contradiction_features:
+      - feature: follicular_papules
+        condition: eq
+        threshold: 1
+        penalty: 0.35
+        competing_disease: pityriasis_rubra_pilaris
+    min_activation_threshold: 0.50
+    literature_source: "Habif TP. Clinical Dermatology: A Color Guide to Diagnosis and Therapy. 6th ed. Elsevier; 2016. Chapter 8."
+
+  - rule_id: PSO_004
+    disease_target: psoriasis
+    evidence_tier: B
+    activation_logic: binary
+    confidence_weight: 0.70
+    clinical_rationale: >
+      Psoriasis has a well-documented hereditary component with polygenic inheritance.
+      A positive family history in a first-degree relative increases the likelihood of
+      psoriasis substantially. This feature serves as an independent Bayesian prior
+      that strengthens any co-activating evidence.
+    supporting_features:
+      - feature: family_history
+        condition: eq
+        threshold: 1
+        partial_weight: 1.0
+    contradiction_features: []
+    min_activation_threshold: 0.50
+    literature_source: "Nair RP & Nair RP. Psoriasis genetics. In: Nickoloff BJ, ed. Dermatologic Clinics 2004;22:423–432."
+
+  - rule_id: PSO_005
+    disease_target: psoriasis
+    evidence_tier: B
+    activation_logic: composite
+    confidence_weight: 0.65
+    clinical_rationale: >
+      The combination of clinically significant erythema (grade ≥ 2) and prominent
+      scaling (grade ≥ 2) characterises the classic erythematous plaque of psoriasis.
+      Neither feature alone is specific, but their co-occurrence at clinically
+      significant thresholds provides meaningful confirmatory evidence.
+    supporting_features:
+      - feature: erythema
+        condition: gte
+        threshold: 2
+        partial_weight: 0.55
+      - feature: scaling
+        condition: gte
+        threshold: 2
+        partial_weight: 0.45
+    contradiction_features:
+      - feature: oral_mucosal_involvement
+        condition: eq
+        threshold: 1
+        penalty: 0.20
+        competing_disease: lichen_planus
+    min_activation_threshold: 0.50
+    literature_source: "Fitzpatrick's Dermatology in General Medicine. 8th ed. McGraw-Hill; 2012. Section 18."
+
+  - rule_id: PSO_006
+    disease_target: psoriasis
+    evidence_tier: B
+    activation_logic: threshold
+    confidence_weight: 0.60
+    clinical_rationale: >
+      Psoriatic plaques characteristically have well-defined borders due to the sharp
+      demarcation between abnormal and normal keratinocyte proliferation zones.
+      A definite border grade ≥ 2 supports the organised, plaque-forming pattern
+      of psoriasis as opposed to the diffuse, poorly marginated presentation
+      typical of chronic eczematous dermatitis.
+    supporting_features:
+      - feature: definite_borders
+        condition: gte
+        threshold: 2
+        partial_weight: 1.0
+    contradiction_features:
+      - feature: oral_mucosal_involvement
+        condition: eq
+        threshold: 1
+        penalty: 0.20
+        competing_disease: lichen_planus
+    min_activation_threshold: 0.50
+    literature_source: "Habif TP. Clinical Dermatology: A Color Guide to Diagnosis and Therapy. 6th ed. Elsevier; 2016. Chapter 8."

@@ -1,0 +1,226 @@
+# ============================================================
+# Contradiction Matrix
+# Structured cross-disease contradiction definitions for the
+# DiagnosticConflictAnalyzer (Stage 3 of reasoning pipeline).
+#
+# Each entry defines a bilateral or asymmetric contradiction:
+# when a feature activates a rule for disease A, it simultaneously
+# reduces evidence for disease B by the specified penalty.
+#
+# Contradiction load = sum of active penalty weights.
+# Threshold for mandatory BIOPSY_ADVISED: contradiction_load >= 0.40
+# ============================================================
+
+version: "1.0"
+
+confusion_zones:
+  # Known pairs of diseases with high clinical overlap — used by
+  # the confusion_zone_proximity safety gate.
+  - pair: [psoriasis, seborrheic_dermatitis]
+    description: >
+      Both produce scaling erythematous plaques, often on the scalp.
+      Distinguished primarily by Koebner phenomenon and extensor joint
+      involvement (psoriasis) vs. sebaceous distribution (seborrheic dermatitis).
+    proximity_threshold: 0.30
+
+  - pair: [psoriasis, lichen_planus]
+    description: >
+      Both produce pruritic, scaling, well-bordered plaques. Distinguished by
+      polygonal morphology and oral mucosal involvement (lichen planus) vs.
+      Koebner phenomenon and extensor distribution (psoriasis).
+    proximity_threshold: 0.30
+
+  - pair: [lichen_planus, pityriasis_rosea]
+    description: >
+      Both can produce pruritic papulosquamous truncal eruptions. Distinguished by
+      polygonal morphology and oral involvement (lichen planus) vs. Christmas-tree
+      distribution and herald patch (pityriasis rosea).
+    proximity_threshold: 0.30
+
+  - pair: [seborrheic_dermatitis, chronic_dermatitis]
+    description: >
+      Both produce diffuse, poorly-bordered erythematous scaling with pruritus.
+      Distinguished by sebaceous distribution and greasy scale (seborrheic) vs.
+      lichenification and itch-scratch pattern (chronic dermatitis).
+    proximity_threshold: 0.30
+
+  - pair: [pityriasis_rubra_pilaris, psoriasis]
+    description: >
+      Both can produce widespread erythematous plaques with scaling. Distinguished
+      definitively by follicular papules (PRP) and absence of Koebner phenomenon
+      in PRP.
+    proximity_threshold: 0.30
+
+
+contradictions:
+  # Bilateral contradictions — feature presence simultaneously supports
+  # one disease and contradicts another.
+
+  - contradiction_id: CONTRA_001
+    trigger_feature: koebner_phenomenon
+    trigger_value: 1
+    supports_disease: psoriasis
+    contradicts_disease: lichen_planus
+    penalty_weight: 0.35
+    clinical_rationale: >
+      The Koebner phenomenon is well-documented in psoriasis but does not
+      characteristically occur in lichen planus, reducing posterior probability
+      for lichen planus when present.
+    literature_source: "Boyd AS & Neldner KH. Lichen planus. J Am Acad Dermatol 1991;25(4):593–619."
+
+  - contradiction_id: CONTRA_002
+    trigger_feature: koebner_phenomenon
+    trigger_value: 1
+    supports_disease: psoriasis
+    contradicts_disease: seborrheic_dermatitis
+    penalty_weight: 0.40
+    clinical_rationale: >
+      Koebner phenomenon is absent in seborrheic dermatitis. Its presence in a
+      scaling erythematous case shifts probability away from seborrheic dermatitis.
+    literature_source: "Naldi L & Rebora A. Seborrheic dermatitis. N Engl J Med 2009;360(4):387–396."
+
+  - contradiction_id: CONTRA_003
+    trigger_feature: koebner_phenomenon
+    trigger_value: 1
+    supports_disease: psoriasis
+    contradicts_disease: pityriasis_rubra_pilaris
+    penalty_weight: 0.40
+    clinical_rationale: >
+      Koebner phenomenon has not been documented in pityriasis rubra pilaris. Its
+      presence argues against PRP and in favour of psoriasis.
+    literature_source: "Griffiths WAD. Pityriasis rubra pilaris. Clin Exp Dermatol 1980;5(1):105–112."
+
+  - contradiction_id: CONTRA_004
+    trigger_feature: oral_mucosal_involvement
+    trigger_value: 1
+    supports_disease: lichen_planus
+    contradicts_disease: psoriasis
+    penalty_weight: 0.30
+    clinical_rationale: >
+      Oral mucosal involvement is a hallmark of lichen planus (Wickham's striae,
+      erosive lesions) and does not occur in psoriasis. Its presence reduces
+      psoriasis probability.
+    literature_source: "Eisen D. The clinical features of oral lichen planus. J Am Acad Dermatol 2002;46(2):207–214."
+
+  - contradiction_id: CONTRA_005
+    trigger_feature: oral_mucosal_involvement
+    trigger_value: 1
+    supports_disease: lichen_planus
+    contradicts_disease: seborrheic_dermatitis
+    penalty_weight: 0.35
+    clinical_rationale: >
+      Seborrheic dermatitis does not produce oral mucosal lesions. Mucosal
+      involvement shifts probability away from seborrheic dermatitis.
+    literature_source: "Schwartz RA et al. Seborrheic dermatitis. Am Fam Physician 2006;74(1):125–130."
+
+  - contradiction_id: CONTRA_006
+    trigger_feature: oral_mucosal_involvement
+    trigger_value: 1
+    supports_disease: lichen_planus
+    contradicts_disease: pityriasis_rubra_pilaris
+    penalty_weight: 0.45
+    clinical_rationale: >
+      Oral mucosal involvement is not a feature of pityriasis rubra pilaris; its
+      presence is a strong indicator against PRP.
+    literature_source: "Sehgal VN et al. Pityriasis rubra pilaris. Indian J Dermatol 2008;74(1):6–15."
+
+  - contradiction_id: CONTRA_007
+    trigger_feature: polygonal_papules
+    trigger_value: 1
+    supports_disease: lichen_planus
+    contradicts_disease: psoriasis
+    penalty_weight: 0.40
+    clinical_rationale: >
+      Polygonal flat-topped papules are pathognomonic for lichen planus and do not
+      occur in psoriasis. Their presence is strong evidence against psoriasis.
+    literature_source: "Gorouhi F et al. Cutaneous and mucosal lichen planus. ScientificWorldJournal 2014;2014:742826."
+
+  - contradiction_id: CONTRA_008
+    trigger_feature: polygonal_papules
+    trigger_value: 1
+    supports_disease: lichen_planus
+    contradicts_disease: seborrheic_dermatitis
+    penalty_weight: 0.45
+    clinical_rationale: >
+      Polygonal papules do not occur in seborrheic dermatitis. Their presence is
+      strong evidence against a seborrheic dermatitis diagnosis.
+    literature_source: "Naldi L & Rebora A. Seborrheic dermatitis. N Engl J Med 2009;360(4):387–396."
+
+  - contradiction_id: CONTRA_009
+    trigger_feature: polygonal_papules
+    trigger_value: 1
+    supports_disease: lichen_planus
+    contradicts_disease: pityriasis_rubra_pilaris
+    penalty_weight: 0.50
+    clinical_rationale: >
+      Follicular papules (PRP) and polygonal papules (LP) are mutually exclusive
+      morphological signatures. The presence of polygonal papules strongly
+      contradicts PRP.
+    literature_source: "Griffiths WAD. Pityriasis rubra pilaris. Clin Exp Dermatol 1980;5(1):105–112."
+
+  - contradiction_id: CONTRA_010
+    trigger_feature: follicular_papules
+    trigger_value: 1
+    supports_disease: pityriasis_rubra_pilaris
+    contradicts_disease: psoriasis
+    penalty_weight: 0.45
+    clinical_rationale: >
+      Follicular papules are pathognomonic for PRP and do not occur in psoriasis.
+      Their presence is strong evidence against psoriasis.
+    literature_source: "Griffiths WAD. Pityriasis rubra pilaris. Clin Exp Dermatol 1980;5(1):105–112."
+
+  - contradiction_id: CONTRA_011
+    trigger_feature: follicular_papules
+    trigger_value: 1
+    supports_disease: pityriasis_rubra_pilaris
+    contradicts_disease: lichen_planus
+    penalty_weight: 0.35
+    clinical_rationale: >
+      Follicular keratotic papules of PRP are histologically and clinically distinct
+      from the flat-topped polygonal papules of lichen planus. Their presence
+      reduces the probability of lichen planus.
+    literature_source: "Griffiths WAD. Pityriasis rubra pilaris. Clin Exp Dermatol 1980;5(1):105–112."
+
+  - contradiction_id: CONTRA_012
+    trigger_feature: knee_and_elbow_involvement
+    trigger_value: 1
+    supports_disease: psoriasis
+    contradicts_disease: seborrheic_dermatitis
+    penalty_weight: 0.35
+    clinical_rationale: >
+      Seborrheic dermatitis does not characteristically involve extensor joint
+      surfaces. Knee and elbow involvement shifts probability toward psoriasis.
+    literature_source: "Schwartz RA et al. Seborrheic dermatitis. Am Fam Physician 2006;74(1):125–130."
+
+  - contradiction_id: CONTRA_013
+    trigger_feature: knee_and_elbow_involvement
+    trigger_value: 1
+    supports_disease: psoriasis
+    contradicts_disease: pityriasis_rosea
+    penalty_weight: 0.40
+    clinical_rationale: >
+      Pityriasis rosea follows a truncal distribution along Langer lines and does
+      not characteristically involve extensor joint surfaces. Joint surface involvement
+      argues against pityriasis rosea.
+    literature_source: "Drago F et al. Pityriasis rosea. J Am Acad Dermatol 2009;61(2):303–318."
+
+  - contradiction_id: CONTRA_014
+    trigger_feature: family_history
+    trigger_value: 1
+    supports_disease: psoriasis
+    contradicts_disease: seborrheic_dermatitis
+    penalty_weight: 0.25
+    clinical_rationale: >
+      A positive family history of skin disease is more strongly associated with
+      psoriasis (polygenic inheritance) than seborrheic dermatitis. Its presence
+      marginally reduces seborrheic dermatitis probability.
+    literature_source: "Nair RP et al. Psoriasis genetics. Dermatol Clin 2004;22:423–432."
+
+
+aggregate_penalty_thresholds:
+  mandatory_biopsy_escalation: 0.40
+  description: >
+    When the sum of active contradiction penalty weights reaches or exceeds 0.40,
+    the ClinicalSafetyGate triggers mandatory BIOPSY_ADVISED regardless of the
+    leading hypothesis certainty score. This threshold is defined in
+    configs/biopsy_thresholds.yaml under safety_invariants.contradiction_safety_ceiling.
