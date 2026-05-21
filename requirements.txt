@@ -1,0 +1,60 @@
+# ============================================================
+# Certainty-Aware Symbolic Clinical Inference Framework
+# Phase 1: Foundational Infrastructure
+# ============================================================
+
+# Dataset retrieval
+ucimlrepo>=0.0.7
+
+# Core data manipulation
+pandas>=2.1.0
+numpy>=1.26.0
+
+# Pipeline contracts and data validation
+pydantic>=2.5.0
+
+# Configuration management
+pyyaml>=6.0.1
+
+# Schema validation (rule YAML validation)
+jsonschema>=4.20.0
+
+# Logging utilities
+structlog>=24.1.0
+
+# ============================================================
+# Phase 2: Statistical Reference Systems (added in Phase 2)
+# ============================================================
+# scikit-learn>=1.3.0
+# xgboost>=2.0.0
+
+# ============================================================
+# Phase 3: Evaluation and Explainability (added in Phase 3)
+# ============================================================
+# scipy>=1.11.0
+# shap>=0.44.0
+# imodels>=1.3.7
+
+# ============================================================
+# Phase 4: Visualization (added in Phase 4)
+# ============================================================
+# matplotlib>=3.8.0
+# seaborn>=0.13.0
+# networkx>=3.2.0
+
+# ============================================================
+# Phase 5: Frontend (managed separately via package.json)
+# ============================================================
+# See app/frontend/package.json
+
+# ============================================================
+# Phase 6: Reporting (added in Phase 6)
+# ============================================================
+# reportlab>=4.0.0
+# weasyprint>=60.0
+
+# ============================================================
+# Development and Testing
+# ============================================================
+pytest>=7.4.0
+pytest-cov>=4.1.0
