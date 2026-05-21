@@ -1,0 +1,59 @@
+# ============================================================
+# Biopsy Triage Decision Thresholds
+# Governs ClinicalEscalationEngine and ClinicalSafetyGate.
+# All thresholds are calibrated initial values — subject to
+# empirical calibration against UCI dataset during Phase 6.
+# ============================================================
+
+triage_thresholds:
+  safe_biopsy_free:
+    min_certainty: 0.82
+    min_certainty_gap: 0.40
+    max_contradiction_load: 0.20
+  moderate_certainty:
+    min_certainty: 0.65
+    min_certainty_gap: 0.35
+  ambiguous_case:
+    min_certainty: 0.45
+    max_certainty_gap: 0.20
+  biopsy_advised:
+    max_certainty: 0.45
+
+safety_invariants:
+  contradiction_safety_ceiling:
+    threshold: 0.40
+    description: "contradiction_load >= threshold triggers mandatory BIOPSY_ADVISED"
+  evidence_sufficiency_floor:
+    min_activated_rules: 2
+    description: "activated_rule_count < min triggers maximum AMBIGUOUS_CASE"
+  entropy_escalation_ceiling:
+    max_entropy_bits: 1.50
+    description: "ambiguity_index > threshold triggers mandatory BIOPSY_ADVISED"
+
+safety_gates:
+  single_source_dominance:
+    max_single_rule_fraction: 0.60
+    cap: MODERATE_CERTAINTY
+    description: "Single rule contributing > 60% of certainty triggers cap"
+  pathognomonic_absence:
+    min_pathognomonic_rules: 1
+    certainty_threshold: 0.75
+    cap: MODERATE_CERTAINTY
+    description: "High certainty without any Tier-A rule triggers cap"
+  critical_missingness:
+    max_critical_missing: 2
+    cap: AMBIGUOUS_CASE
+    description: ">= 3 critical features missing triggers cap"
+  confusion_zone_proximity:
+    max_gap_in_known_pair: 0.30
+    penalty: 0.15
+    description: "Leading pair in known confusion zone applies proximity penalty"
+  overconfidence_prevention:
+    certainty_threshold: 0.92
+    min_contradiction_load: 0.10
+    cap: MODERATE_CERTAINTY
+    description: "Very high certainty combined with non-zero contradiction triggers cap"
+
+insufficient_evidence:
+  min_completeness_score: 0.30
+  description: "Feature completeness below threshold produces INSUFFICIENT_EVIDENCE"

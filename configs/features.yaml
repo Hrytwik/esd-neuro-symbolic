@@ -1,0 +1,75 @@
+# ============================================================
+# Feature Configuration
+# Authoritative feature group definitions for the inference pipeline.
+# Source of truth for clinical/histopathological separation.
+# ============================================================
+
+clinical_features:
+  ordinal:
+    - erythema
+    - scaling
+    - definite_borders
+    - itching
+  binary:
+    - koebner_phenomenon
+    - polygonal_papules
+    - follicular_papules
+    - oral_mucosal_involvement
+    - knee_and_elbow_involvement
+    - scalp_involvement
+    - family_history
+  continuous:
+    - age
+
+histopathological_features:
+  ordinal:
+    - melanin_incontinence
+    - eosinophils_in_the_infiltrate
+    - PNL_infiltrate
+    - fibrosis_of_the_papillary_dermis
+    - exocytosis
+    - acanthosis
+    - hyperkeratosis
+    - parakeratosis
+    - clubbing_of_the_rete_ridges
+    - elongation_of_the_rete_ridges
+    - thinning_of_the_suprapapillary_epidermis
+    - spongiform_pustule
+    - munro_microabcess
+    - focal_hypergranulosis
+    - disappearance_of_the_granular_layer
+    - vacuolisation_and_damage_of_basal_layer
+    - spongiosis
+    - saw_tooth_appearance_of_retes
+    - follicular_horn_plug
+    - perifollicular_parakeratosis
+    - inflammatory_monoluclear_infiltrate
+    - band_like_infiltrate
+
+ordinal_range:
+  min: 0
+  max: 3
+  clinical_significance_threshold: 2  # grade >= 2 is "clinically significant"
+
+critical_discriminating_features:
+  - koebner_phenomenon
+  - polygonal_papules
+  - follicular_papules
+  - oral_mucosal_involvement
+
+disease_labels:
+  1: psoriasis
+  2: seborrheic_dermatitis
+  3: lichen_planus
+  4: pityriasis_rosea
+  5: chronic_dermatitis
+  6: pityriasis_rubra_pilaris
+
+uci_dataset:
+  id: 33
+  name: "Dermatology"
+  n_instances: 366
+  n_features: 34
+  n_classes: 6
+  license: "CC BY 4.0"
+  citation: "Ilter N, Güvenir HA (1998). Differential diagnosis with few and unreliable clinical symptoms. Proceedings of the 12th IEEE Symposium on Computer-Based Medical Systems."

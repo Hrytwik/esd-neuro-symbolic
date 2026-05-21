@@ -1,0 +1,65 @@
+# ============================================================
+# Evaluation Framework Configuration
+# ============================================================
+
+cross_validation:
+  n_folds: 10
+  strategy: stratified
+  shuffle: true
+  random_state: 42
+
+primary_metric: macro_f1
+secondary_metrics:
+  - accuracy
+  - per_class_f1
+  - weighted_f1
+
+statistical_tests:
+  b_vs_c_comparison:
+    test: wilcoxon_signed_rank
+    alternative: two-sided
+    significance_level: 0.05
+
+triage_evaluation:
+  safe_correctness_target: 0.90
+  description: >
+    When SAFE_BIOPSY_FREE is recommended, >= 90% of cases should have
+    the correct leading diagnosis. This is the primary clinical safety metric.
+
+calibration:
+  n_bins: 10
+  strategy: uniform
+  description: "ECE computed over 10 equal-width certainty bins"
+
+robustness:
+  missingness_levels: [1, 2, 3, 4, 5]   # number of features masked
+  noise_fractions: [0.20, 0.40]           # fraction of ordinal features perturbed ±1
+  n_trials_per_level: 100
+  random_state: 42
+
+ablation_configurations:
+  - name: "rules_only"
+    components: [rule_activation]
+    description: "Symbolic rules without contradiction or safety gate"
+  - name: "rules_plus_contradiction"
+    components: [rule_activation, contradiction_engine]
+    description: "Rules with contradiction propagation, no safety gate"
+  - name: "rules_plus_safety"
+    components: [rule_activation, safety_gate]
+    description: "Rules with safety gate, no contradiction"
+  - name: "full_symbolic"
+    components: [rule_activation, contradiction_engine, safety_gate, certainty_propagation]
+    description: "Complete symbolic engine — primary contribution"
+  - name: "hybrid"
+    components: [rule_activation, contradiction_engine, safety_gate, certainty_propagation, statistical_adjunct]
+    description: "Full symbolic + statistical refinement layer"
+
+output_paths:
+  cv_summary: "outputs/tables/cv_summary.csv"
+  per_class_f1: "outputs/tables/per_class_f1.csv"
+  wilcoxon_result: "outputs/tables/b_vs_c_wilcoxon.txt"
+  triage_accuracy: "outputs/tables/triage_accuracy.csv"
+  shap_top10: "outputs/tables/shap_top10_features.csv"
+  figures_dir: "outputs/figures/"
+  traces_dir: "outputs/traces/"
+  reports_dir: "outputs/reports/"
