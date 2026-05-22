@@ -1,0 +1,32 @@
+CLINICAL REASONING NARRATIVE
+============================================================
+Case ID : SYN_002
+Run ID  : 37c409a8-82c
+Generated: 20260522T102602Z
+============================================================
+
+[Clinical Presentation]
+The clinical evaluation identified 5 active feature(s) contributing to the differential: definite borders, erythema, itching, scaling, scalp involvement. A total of 14 diagnostic rule(s) reached activation threshold across all disease hypotheses.
+
+[Evidence Interpretation]
+The leading differential hypotheses, ranked by certainty:
+  Seborrheic dermatitis [certainty 39.5%, rank 1]: pathognomonic evidence present (SD_001); 3 supportive rule(s) activated.
+  Pityriasis rubra pilaris [certainty 19.6%, rank 2]: no pathognomonic evidence identified; 3 supportive rule(s) activated.
+  Chronic dermatitis [certainty 19.1%, rank 3]: no pathognomonic evidence identified; 3 supportive rule(s) activated.
+
+[Contradiction Analysis]
+No cross-disease contradictions detected. The clinical feature profile is internally consistent.
+
+[Certainty Assessment]
+The leading hypothesis (seborrheic dermatitis) reached certainty=0.395 with a gap of 0.199 over the second-ranking hypothesis. The diagnostic distribution is classified as ambiguous (Shannon entropy=2.255 bits).
+
+[Safety Assessment]
+1 safety condition(s) triggered:
+  · [I3] Entropy Escalation Ceiling: Ambiguity index 2.255 bits > ceiling 1.5 bits.
+Effective safety cap applied: biopsy recommended.
+
+[Triage Rationale]
+Triage recommendation: BIOPSY RECOMMENDED.
+Leading differential: seborrheic dermatitis (certainty=0.395, gap=0.199).
+Final reasoning state: biopsy escalation.
+Rationale: Diagnostic state machine reached BIOPSY_ESCALATION state.

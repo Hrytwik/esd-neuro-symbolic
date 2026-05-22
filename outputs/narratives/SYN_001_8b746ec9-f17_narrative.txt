@@ -1,0 +1,36 @@
+CLINICAL REASONING NARRATIVE
+============================================================
+Case ID : SYN_001
+Run ID  : 8b746ec9-f17
+Generated: 20260522T102602Z
+============================================================
+
+[Clinical Presentation]
+The clinical evaluation identified 7 active feature(s) contributing to the differential: definite borders, erythema, family history, knee and elbow involvement, koebner phenomenon, scaling, scalp involvement. A total of 19 diagnostic rule(s) reached activation threshold across all disease hypotheses.
+
+[Evidence Interpretation]
+The leading differential hypotheses, ranked by certainty:
+  Psoriasis [certainty 78.5%, rank 1]: pathognomonic evidence present (PSO_001); 5 supportive rule(s) activated.
+  Lichen planus [certainty 5.8%, rank 2]: no pathognomonic evidence identified; 3 supportive rule(s) activated.
+  Pityriasis rubra pilaris [certainty 5.5%, rank 3]: no pathognomonic evidence identified; 3 supportive rule(s) activated.
+
+[Contradiction Analysis]
+Contradiction load: 0.000 (6 active contradiction(s)).
+  · koebner phenomenon (value=1) supports psoriasis but penalises lichen planus (penalty=0.35).
+  · koebner phenomenon (value=1) supports psoriasis but penalises seborrheic dermatitis (penalty=0.40).
+  · koebner phenomenon (value=1) supports psoriasis but penalises pityriasis rubra pilaris (penalty=0.40).
+  · knee and elbow involvement (value=1) supports psoriasis but penalises seborrheic dermatitis (penalty=0.35).
+  · knee and elbow involvement (value=1) supports psoriasis but penalises pityriasis rosea (penalty=0.40).
+  · ... and 1 additional contradiction(s).
+
+[Certainty Assessment]
+The leading hypothesis (psoriasis) reached certainty=0.785 with a gap of 0.727 over the second-ranking hypothesis. The diagnostic distribution is classified as highly certain (Shannon entropy=1.237 bits).
+
+[Safety Assessment]
+All safety invariants and gates were satisfied. No safety-driven escalation was applied.
+
+[Triage Rationale]
+Triage recommendation: MODERATE CERTAINTY.
+Leading differential: psoriasis (certainty=0.785, gap=0.727).
+Final reasoning state: partial alignment.
+Rationale: Certainty=0.785 and gap=0.727 meet moderate thresholds. Clinical judgement required for biopsy decision.

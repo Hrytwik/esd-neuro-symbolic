@@ -1,0 +1,45 @@
+{
+  "case_id": "SYN_005",
+  "run_id": "03f42155-3d8",
+  "exported_at": "20260522T102602Z",
+  "stage_count": 1,
+  "snapshots": [
+    {
+      "stage": 7,
+      "stage_name": "terminal_reasoning",
+      "state": "BIOPSY_ESCALATION",
+      "leading_disease": "lichen_planus",
+      "max_certainty": 0.3924,
+      "certainty_gap": 0.12405,
+      "contradiction_load": 0,
+      "ambiguity_index": 2.19003,
+      "active_rule_count": 12,
+      "tier_a_count": 1,
+      "safety_triggered": true,
+      "triage_so_far": null,
+      "delta_description": "state=BIOPSY_ESCALATION | recommendation=BIOPSY_RECOMMENDED | certainty=0.242 | safety_triggered=True"
+    }
+  ],
+  "deltas": [],
+  "certainty_series": [
+    0.3924
+  ],
+  "state_sequence": [
+    "BIOPSY_ESCALATION"
+  ],
+  "final_decision": {
+    "recommendation": "BIOPSY_RECOMMENDED",
+    "leading_disease": "lichen_planus",
+    "max_certainty": 0.2424,
+    "certainty_gap": 0.0,
+    "contradiction_load": 0,
+    "ambiguity_index": 2.19003,
+    "final_state": "BIOPSY_ESCALATION",
+    "safety_gate_applied": true,
+    "applied_gate_ids": [
+      "I3",
+      "G4"
+    ],
+    "decision_rationale": "Diagnostic state machine reached BIOPSY_ESCALATION state."
+  }
+}

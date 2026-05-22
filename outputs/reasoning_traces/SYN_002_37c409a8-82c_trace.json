@@ -1,0 +1,44 @@
+{
+  "case_id": "SYN_002",
+  "run_id": "37c409a8-82c",
+  "exported_at": "20260522T102602Z",
+  "stage_count": 1,
+  "snapshots": [
+    {
+      "stage": 7,
+      "stage_name": "terminal_reasoning",
+      "state": "BIOPSY_ESCALATION",
+      "leading_disease": "seborrheic_dermatitis",
+      "max_certainty": 0.3954,
+      "certainty_gap": 0.19915,
+      "contradiction_load": 0,
+      "ambiguity_index": 2.25503,
+      "active_rule_count": 14,
+      "tier_a_count": 1,
+      "safety_triggered": true,
+      "triage_so_far": null,
+      "delta_description": "state=BIOPSY_ESCALATION | recommendation=BIOPSY_RECOMMENDED | certainty=0.395 | safety_triggered=True"
+    }
+  ],
+  "deltas": [],
+  "certainty_series": [
+    0.3954
+  ],
+  "state_sequence": [
+    "BIOPSY_ESCALATION"
+  ],
+  "final_decision": {
+    "recommendation": "BIOPSY_RECOMMENDED",
+    "leading_disease": "seborrheic_dermatitis",
+    "max_certainty": 0.3954,
+    "certainty_gap": 0.19915,
+    "contradiction_load": 0,
+    "ambiguity_index": 2.25503,
+    "final_state": "BIOPSY_ESCALATION",
+    "safety_gate_applied": true,
+    "applied_gate_ids": [
+      "I3"
+    ],
+    "decision_rationale": "Diagnostic state machine reached BIOPSY_ESCALATION state."
+  }
+}

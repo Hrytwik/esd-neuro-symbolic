@@ -1,0 +1,41 @@
+{
+  "replay_format": "symbolic_reasoning_v1",
+  "case_id": "SYN_005",
+  "run_id": "03f42155-3d8",
+  "exported_at": "20260522T102602Z",
+  "feature_inputs": {
+    "erythema": 2,
+    "scaling": 1,
+    "definite_borders": 2,
+    "itching": 3,
+    "koebner_phenomenon": 0,
+    "polygonal_papules": 1,
+    "follicular_papules": 0,
+    "oral_mucosal_involvement": 0,
+    "knee_and_elbow_involvement": 0,
+    "scalp_involvement": 0,
+    "family_history": 0
+  },
+  "stages": [
+    {
+      "stage": 7,
+      "stage_name": "terminal_reasoning",
+      "state": "BIOPSY_ESCALATION",
+      "leading_disease": "lichen_planus",
+      "max_certainty": 0.3924,
+      "contradiction_load": 0,
+      "ambiguity_index": 2.19003
+    }
+  ],
+  "certainty_series": [
+    0.3924
+  ],
+  "state_sequence": [
+    "BIOPSY_ESCALATION"
+  ],
+  "final_decision": {
+    "recommendation": "BIOPSY_RECOMMENDED",
+    "leading_disease": "lichen_planus",
+    "max_certainty": 0.2424
+  }
+}
