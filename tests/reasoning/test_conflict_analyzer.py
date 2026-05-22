@@ -114,13 +114,25 @@ class TestPenaltyAggregation:
 # ── Mandatory escalation ──────────────────────────────────────────────────────
 
 class TestMandatoryEscalation:
-    def test_mandatory_escalation_at_ceiling(self, analyzer):
-        # CONTRA_002 penalty=0.45 > ceiling=0.40
-        result = analyzer.analyze({"follicular_papules": 1})
+    def test_mandatory_escalation_when_bilateral(self, analyzer):
+        # Both koebner (PSO→LP) and follicular (PRP→PSO) are present.
+        # PSO is both a source and a target → bilateral conflict.
+        # Bilateral load = 0.30 + 0.45 = 0.75 ≥ ceiling 0.40.
+        result = analyzer.analyze({
+            "koebner_phenomenon": 1,
+            "follicular_papules": 1,
+        })
         assert result.mandatory_escalation
 
+    def test_unidirectional_contradiction_does_not_escalate(self, analyzer):
+        # CONTRA_002 (PRP→PSO, 0.45) fires alone; PSO is never contradicted
+        # back, and PRP is not an active source-of-contradiction target.
+        # → unidirectional exclusion only; bilateral load = 0 < ceiling.
+        result = analyzer.analyze({"follicular_papules": 1})
+        assert not result.mandatory_escalation
+
     def test_no_mandatory_escalation_below_ceiling(self, analyzer):
-        # CONTRA_001 penalty=0.30 < ceiling=0.40
+        # CONTRA_001 (PSO→LP, 0.30) fires alone — unidirectional, load = 0.
         result = analyzer.analyze({"koebner_phenomenon": 1})
         assert not result.mandatory_escalation
 

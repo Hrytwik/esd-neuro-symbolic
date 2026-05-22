@@ -198,8 +198,28 @@ class DiagnosticConflictAnalyzer:
 
         pair_tensions = list(pair_map.values())
 
-        # Total contradiction load
-        contradiction_load = sum(c.penalty_weight for c in active)
+        # Bilateral contradiction load
+        # ─────────────────────────────────────────────────────────────────────
+        # Count contradiction (A → B) only when the conflict is bilateral:
+        # the source disease A is itself a contradiction target somewhere in
+        # this case (meaning competing evidence is present against it), OR the
+        # target disease B is also actively contradicting something (meaning B
+        # has at least one supporting feature that disputes another hypothesis).
+        #
+        # This filters pure unidirectional disease exclusion — e.g. a single
+        # psoriasis-specific feature that simultaneously contradicts several
+        # other diseases without any competing counter-evidence — from the load
+        # metric, which should reflect genuine cross-disease evidential conflict.
+        # ─────────────────────────────────────────────────────────────────────
+        active_source_set: set[str] = {c.source_disease for c in active}
+        active_target_set: set[str] = {c.target_disease for c in active}
+
+        bilateral_active = [
+            c for c in active
+            if c.source_disease in active_target_set
+            or c.target_disease in active_source_set
+        ]
+        contradiction_load = sum(c.penalty_weight for c in bilateral_active)
 
         # Confusion zone activity
         confusion_active: list[tuple[str, str]] = []
