@@ -71,6 +71,21 @@ outputs/reports/*.pdf
 !outputs/traces/.gitkeep
 !outputs/reports/.gitkeep
 
+# Pipeline runtime outputs (reasoning traces, escalation reports, replays, narratives)
+# These are generated at runtime and must not be committed.
+outputs/reasoning_traces/*.json
+outputs/escalation_reports/*.json
+outputs/replay_snapshots/*.json
+outputs/narratives/*.txt
+outputs/validation_runs/*.json
+
+# Preserve the directory markers
+!outputs/reasoning_traces/.gitkeep
+!outputs/escalation_reports/.gitkeep
+!outputs/replay_snapshots/.gitkeep
+!outputs/narratives/.gitkeep
+!outputs/validation_runs/.gitkeep
+
 # Reproducibility packages (generated artifacts)
 outputs/reproducibility_*/
 
