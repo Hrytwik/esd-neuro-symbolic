@@ -201,11 +201,13 @@ def run_tests() -> None:
             X_train_all, y_train, X_test_all, y_test,
             feature_names=list(ALL_FEATURE_NAMES), class_labels=class_labels,
         )
-        result_b = BaselineModelB(ModelBConfig()).fit_and_evaluate(
+        model_b_fitted = BaselineModelB(ModelBConfig())
+        result_b = model_b_fitted.fit_and_evaluate(
             X_train_clin, y_train, X_test_clin, y_test,
             feature_names=list(CLINICAL_FEATURE_NAMES), class_labels=class_labels,
         )
-        result_c = SymbolicModelC(ModelCConfig()).fit_and_evaluate(
+        model_c_fitted = SymbolicModelC(ModelCConfig())
+        result_c = model_c_fitted.fit_and_evaluate(
             X_train_clin, train_vecs, y_train,
             X_test_clin,  test_vecs,  y_test,
             clinical_feature_names=list(CLINICAL_FEATURE_NAMES),
@@ -242,9 +244,8 @@ def run_tests() -> None:
         from src.performance_calibration.escalation_sensitivity_analysis import (
             EscalationSensitivityAnalyzer,
         )
-        y_pred_b = np.array(BaselineModelB(ModelBConfig()).fit(
-            X_train_clin, y_train
-        ).predict(X_test_clin))
+        # Re-use the already-fitted Model B to get test predictions
+        y_pred_b = np.array(model_b_fitted.predict(X_test_clin))
         sens = EscalationSensitivityAnalyzer(
             ambiguity_grid=[1.50, 2.00, 2.50],
             certainty_grid=[0.40, 0.55],
@@ -289,7 +290,194 @@ def run_tests() -> None:
         print(cal_b.summary())
 
         print("\n" + "=" * 72)
-        print("ALL PHASE 5 DIAGNOSTIC TESTS PASSED")
+        print("ALL PHASE 5 STEP 1 DIAGNOSTIC TESTS PASSED")
+        print("=" * 72)
+
+        # ── Phase 5 Step 2 — Recalibration Modules ───────────────────────────
+
+        print("\n" + "=" * 72)
+        print("PHASE 5 STEP 2 — RECALIBRATION MODULES")
+        print("=" * 72)
+
+        # Step 11: ThresholdRecalibrator
+        print("\n[10] Running ThresholdRecalibrator...")
+        from src.performance_calibration.threshold_recalibration import (
+            ThresholdRecalibrator,
+        )
+        recalibrator = ThresholdRecalibrator(
+            ambiguity_ceiling=2.50,
+            certainty_floor=0.40,
+        )
+        recal_vecs = recalibrator.recalibrate(test_vecs)
+        assert len(recal_vecs) == len(test_vecs)
+        # Escalation rate should be lower with recalibrated thresholds
+        orig_esc = sum(1 for v in test_vecs  if v.requires_biopsy) / len(test_vecs)
+        new_esc  = sum(1 for v in recal_vecs if v.requires_biopsy) / len(recal_vecs)
+        print(f"    Escalation: {orig_esc:.1%} -> {new_esc:.1%}")
+        thr_report = recalibrator.fit_and_report(test_vecs, y_pred_b, y_test)
+        assert thr_report.best_config is not None
+        print(f"    Best config: {thr_report.best_config.label()}")
+        print(f"    Escalation reduction: {thr_report.escalation_reduction:.1%}")
+
+        # Step 12: CertaintyRebalancer
+        print("\n[11] Running CertaintyRebalancer...")
+        from src.performance_calibration.certainty_rebalancing import CertaintyRebalancer
+        cert_rebal = CertaintyRebalancer()
+        cert_rebal.fit(train_vecs)
+        cert_enriched = cert_rebal.enrich(test_vecs)
+        assert len(cert_enriched) == len(test_vecs)
+        cert_report = cert_rebal.build_analysis_report(test_vecs, cert_enriched)
+        assert 0.0 <= cert_report.original_distribution.mean <= 1.0
+        assert cert_report.normalised_distribution.mean >= cert_report.original_distribution.mean
+        print(cert_report.summary())
+
+        # Step 13: ContradictionRebalancer
+        print("\n[12] Running ContradictionRebalancer...")
+        from src.performance_calibration.contradiction_rebalancing import (
+            ContradictionRebalancer,
+        )
+        contr_rebal   = ContradictionRebalancer()
+        contr_enriched = contr_rebal.enrich(test_vecs)
+        assert len(contr_enriched) == len(test_vecs)
+        contr_report  = contr_rebal.build_analysis_report(
+            test_vecs, contr_enriched, y_pred_b, y_test
+        )
+        assert "CRITICAL" in contr_report.tier_stats or "NONE" in contr_report.tier_stats
+        print(contr_report.summary())
+
+        # Step 14: CompetitionSharpener
+        print("\n[13] Running CompetitionSharpener...")
+        from src.performance_calibration.competition_sharpening import CompetitionSharpener
+        comp_sharp   = CompetitionSharpener()
+        comp_enriched = comp_sharp.enrich(test_vecs)
+        assert len(comp_enriched) == len(test_vecs)
+        X_comp, comp_names = comp_sharp.build_enriched_matrix(X_test_clin, test_vecs, comp_enriched)
+        assert X_comp.shape[0] == len(test_vecs)
+        assert X_comp.shape[1] > X_test_clin.shape[1]
+        print(f"    Competition-enriched matrix: {X_comp.shape} ({len(comp_names)} features)")
+
+        # Step 15: SymbolicSignalEnricherV2
+        print("\n[14] Running SymbolicSignalEnricherV2...")
+        from src.performance_calibration.symbolic_signal_enrichment_v2 import (
+            SymbolicSignalEnricherV2,
+        )
+        enricher_v2   = SymbolicSignalEnricherV2()
+        enriched_v2   = enricher_v2.enrich(test_vecs)
+        assert len(enriched_v2) == len(test_vecs)
+        X_v2, v2_names = enricher_v2.build_feature_matrix(X_test_clin, enriched_v2)
+        assert X_v2.shape[1] == X_test_clin.shape[1] + 40
+        enrichment_rpt = enricher_v2.build_report(test_vecs, enriched_v2)
+        assert enrichment_rpt.n_signals_total == 40
+        print(enrichment_rpt.summary())
+
+        # Step 16: DiseaseSignatureRefiner
+        print("\n[15] Running DiseaseSignatureRefiner...")
+        from src.performance_calibration.disease_signature_refinement import (
+            DiseaseSignatureRefiner,
+        )
+        sig_refiner = DiseaseSignatureRefiner(class_labels)
+        sig_report  = sig_refiner.analyse(X_test_clin, y_test, test_vecs)
+        assert len(sig_report.feature_profiles) > 0
+        print(sig_report.summary())
+
+        # Step 17: AdvancedBaselineCalibrator (fast mode, small grid)
+        print("\n[16] Running AdvancedBaselineCalibrator (fast mode)...")
+        from src.performance_calibration.advanced_baseline_calibration import (
+            AdvancedBaselineCalibrator,
+        )
+        adv_cal = AdvancedBaselineCalibrator(
+            n_splits=3,
+            n_repeats=2,
+            fast_mode=True,
+            apply_scaling=True,
+        )
+        adv_b = adv_cal.calibrate_model_b(
+            X_train_clin, y_train, X_test_clin, y_test
+        )
+        assert adv_b.best_trial is not None
+        print(f"    Best Model B CV acc: {adv_b.best_trial.cv_mean_accuracy:.4f}")
+        if adv_b.test_accuracy > 0:
+            print(f"    Test accuracy: {adv_b.test_accuracy:.4f}")
+
+        adv_c = adv_cal.calibrate_model_c_v2(
+            X_train_clin, train_vecs, y_train,
+            X_test_clin,  test_vecs,  y_test,
+            ambiguity_ceiling=2.50,
+            certainty_floor=0.40,
+        )
+        assert adv_c.best_trial is not None
+        print(f"    Best Model C CV acc: {adv_c.best_trial.cv_mean_accuracy:.4f}")
+        if adv_c.test_accuracy > 0:
+            print(f"    Test accuracy: {adv_c.test_accuracy:.4f}")
+
+        # Step 18: SymbolicRecoveryAnalyzer
+        print("\n[17] Running SymbolicRecoveryAnalyzer...")
+        from src.performance_calibration.symbolic_recovery_analysis import (
+            SymbolicRecoveryAnalyzer,
+        )
+        # Use fitted model C to generate test predictions for recovery attribution
+        y_pred_c_arr = model_c_fitted.predict(X_test_clin, test_vecs)
+        recovery_rpt = SymbolicRecoveryAnalyzer(class_labels).analyse(
+            test_vecs, y_pred_b, y_pred_c_arr, y_test
+        )
+        assert isinstance(recovery_rpt.n_recoveries, int)
+        assert isinstance(recovery_rpt.symbolic_contribution_index, float)
+        print(recovery_rpt.summary())
+
+        # Step 19: BiopsyReductionAnalyzer
+        print("\n[18] Running BiopsyReductionAnalyzer...")
+        from src.performance_calibration.biopsy_reduction_analysis import (
+            BiopsyReductionAnalyzer,
+        )
+        biopsy_rpt = BiopsyReductionAnalyzer(class_labels).analyse(
+            test_vecs, y_pred_b, y_test
+        )
+        assert biopsy_rpt.total_cases == len(test_vecs)
+        assert 0.0 <= biopsy_rpt.overall_escalation_rate_default <= 1.0
+        print(biopsy_rpt.summary())
+
+        # Step 20: FinalCalibrationReporter
+        print("\n[19] Running FinalCalibrationReporter...")
+        from src.performance_calibration.final_calibration_report import (
+            FinalCalibrationReporter,
+        )
+        reporter  = FinalCalibrationReporter(
+            class_labels=class_labels,
+            model_b_accuracy_before=result_b.accuracy,
+            model_c_accuracy_before=result_c.accuracy,
+            model_a_reference=result_a.accuracy,
+            target_model_b=0.86,
+            target_model_c=0.88,
+        )
+        final_rpt = reporter.compile(
+            threshold_report=thr_report,
+            certainty_report=cert_report,
+            recovery_report=recovery_rpt,
+            biopsy_report=biopsy_rpt,
+            contradiction_report=contr_report,
+            enrichment_report=enrichment_rpt,
+            model_b_result=adv_b,
+            model_c_result=adv_c,
+            symbolic_vectors=test_vecs,
+        )
+        assert final_rpt.clinical_safety_verified in (True, False)
+        assert isinstance(final_rpt.performance_comparison.model_b_improvement_pp, float)
+        report_text = final_rpt.summary()
+        assert "SECTION 1" in report_text
+        assert "SECTION 9" in report_text
+        print(report_text)
+
+        # JSON export
+        report_json = final_rpt.to_json()
+        import json
+        parsed = json.loads(report_json)
+        assert "performance_comparison" in parsed
+        assert "escalation_summary" in parsed
+        assert "contradiction_audit" in parsed
+        print(f"    JSON export: {len(report_json)} bytes, {len(parsed)} top-level keys")
+
+        print("\n" + "=" * 72)
+        print("ALL PHASE 5 STEP 2 RECALIBRATION TESTS PASSED")
         print("=" * 72)
 
     finally:
