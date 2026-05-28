@@ -1,12 +1,14 @@
 /**
  * app/page.tsx
  * =============
- * Root page — renders the full-screen clinical reasoning workstation.
- * No additional chrome; the workspace is the entire application.
+ * Root page — clinical workflow.
+ *
+ * Default experience: simple clinical input → results (doctor-facing).
+ * Advanced reasoning is accessible via the drawer in the results view.
  */
 
-import { ClinicalReasoningWorkspace } from "@/components/workspace/ClinicalReasoningWorkspace";
+import { ClinicalWorkflow } from "@/components/clinical/ClinicalWorkflow";
 
 export default function WorkstationPage() {
-  return <ClinicalReasoningWorkspace />;
+  return <ClinicalWorkflow />;
 }
