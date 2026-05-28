@@ -7,6 +7,7 @@
 export * from "./reasoning-contract";
 export * from "./replay-schema";
 export * from "./graph-contract";
+export * from "./clinical-input";
 
 // ─── Shared UI state types ────────────────────────────────────────────────────
 
