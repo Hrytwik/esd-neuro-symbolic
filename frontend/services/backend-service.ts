@@ -16,6 +16,7 @@ import type {
   GraphSnapshot,
   CaseListItem,
 } from "@/types";
+import type { FeatureVector } from "@/types/clinical-input";
 import {
   MOCK_CASES,
   MOCK_CASE_LIST,
@@ -99,6 +100,57 @@ export const BackendService = {
     assertSchemaVersion(graph,     "1.0.0");
 
     return { replay, reasoning, graph };
+  },
+
+  /**
+   * Runs diagnostic reasoning for a supplied feature vector.
+   * In mock mode, selects the closest matching demo case using weighted feature scoring.
+   */
+  async runReasoning(features: FeatureVector): Promise<CaseBundle> {
+    if (USE_MOCK) {
+      // Simulate processing delay
+      await new Promise(r => setTimeout(r, 1400));
+
+      // Score each demo case against the input feature profile
+      const scores: Record<string, number> = {
+        "PSO-001":
+          (features.erythema          ?? 0) * 1.5 +
+          (features.scaling           ?? 0) * 1.5 +
+          (features.scalp_involvement ?? 0) * 2.0 +
+          (features.koebner_phenomenon ?? 0) * 2.0 +
+          (features.family_history    ?? 0) * 1.5 +
+          (features.knee_elbow_involv ?? 0) * 1.5 +
+          (features.definite_borders  ?? 0) * 0.5,
+
+        "PRP-001":
+          (features.follicular_papules ?? 0) * 5.0 +
+          (features.scaling            ?? 0) * 1.0 +
+          (features.erythema           ?? 0) * 0.5 +
+          (features.knee_elbow_involv  ?? 0) * 0.5,
+
+        "LP-001":
+          (features.polygonal_papules  ?? 0) * 5.0 +
+          (features.oral_involvement   ?? 0) * 3.0 +
+          (features.itching            ?? 0) * 1.5 +
+          (features.melanin_incontinence ?? 0) * 2.0 +
+          (features.definite_borders   ?? 0) * 0.5,
+      };
+
+      const best = Object.entries(scores).sort((a, b) => b[1] - a[1])[0][0];
+      const bundle = MOCK_CASES[best];
+      if (!bundle) throw new BackendServiceError("CASE_NOT_FOUND", `Matched case ${best} not found.`);
+      return bundle;
+    }
+
+    const res = await fetch(`${API_BASE}/reason`, {
+      method:  "POST",
+      headers: { "Content-Type": "application/json" },
+      body:    JSON.stringify({ features }),
+    });
+    if (!res.ok) throw new BackendServiceError("REASONING_FAILED", res.statusText);
+    const data = await res.json() as { replay: ReplayCaseRecord; reasoning: ReasoningOutput; graph: GraphSnapshot };
+    assertSchemaVersion(data.reasoning, "1.0.0");
+    return data;
   },
 
   /**
