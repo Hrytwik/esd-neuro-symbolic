@@ -1,0 +1,166 @@
+/**
+ * app/globals.css
+ * ================
+ * Global stylesheet for the clinical reasoning workstation.
+ * Tailwind base → components → utilities + custom clinical overrides.
+ */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── React Flow base styles ──────────────────────────────────────────────── */
+@import "@xyflow/react/dist/style.css";
+
+/* ── Base layer overrides ─────────────────────────────────────────────────── */
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    @apply bg-clinical-bg text-slate-800;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+
+  /* Clinical scroll bars — subtle, consistent */
+  ::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-slate-200 rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-slate-300;
+  }
+
+  /* Remove default focus ring on non-keyboard focus */
+  :focus:not(:focus-visible) {
+    outline: none;
+  }
+
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-blue-500;
+  }
+}
+
+/* ── Component layer ──────────────────────────────────────────────────────── */
+@layer components {
+
+  /* Clinical panel chrome */
+  .panel-chrome {
+    @apply bg-white border border-clinical-border rounded-lg shadow-clinical;
+  }
+
+  /* Clinical data row */
+  .data-row {
+    @apply flex items-center justify-between py-1.5 text-xs;
+  }
+
+  .data-row-label {
+    @apply text-slate-500;
+  }
+
+  .data-row-value {
+    @apply font-mono text-slate-700 font-medium;
+  }
+
+  /* Certainty chip */
+  .certainty-chip {
+    @apply inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-mono font-semibold;
+  }
+
+  /* Clinical section divider */
+  .section-divider {
+    @apply border-t border-slate-100 my-3;
+  }
+
+  /* Monospace value display */
+  .mono-value {
+    @apply font-mono text-xs tabular-nums;
+  }
+}
+
+/* ── Utility layer ────────────────────────────────────────────────────────── */
+@layer utilities {
+
+  /* Prevent text selection in interactive controls */
+  .no-select {
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  /* Smooth certainty bar transitions */
+  .certainty-transition {
+    transition: width 600ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Subtle panel fade-in */
+  .panel-fade {
+    animation: fadeIn 200ms ease-out;
+  }
+}
+
+/* ── React Flow clinical overrides ───────────────────────────────────────── */
+.react-flow {
+  background-color: #f0f3f7;
+}
+
+.react-flow__background {
+  background-color: #f0f3f7;
+}
+
+/* Node selection ring */
+.react-flow__node.selected > div {
+  box-shadow: 0 0 0 2px #2563eb;
+}
+
+/* Edge clinical styling */
+.react-flow__edge-path {
+  stroke-linecap: round;
+}
+
+/* MiniMap clinical palette */
+.react-flow__minimap {
+  @apply border border-clinical-border rounded shadow-clinical;
+  background-color: #f8fafc;
+}
+
+/* Controls panel */
+.react-flow__controls {
+  @apply border border-clinical-border rounded shadow-clinical overflow-hidden;
+}
+
+.react-flow__controls-button {
+  @apply bg-white hover:bg-slate-50 border-b border-slate-100;
+}
+
+.react-flow__controls-button:last-child {
+  border-bottom: none;
+}
+
+/* ── Print overrides ──────────────────────────────────────────────────────── */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  body {
+    background: white;
+  }
+}
